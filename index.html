@@ -9,6 +9,19 @@
     <meta property="og:description" content="Comprehensive employee training management system for dyeing and textile facilities, featuring compliance tracking (ETP, ZDHC, Safety), Google Sheets & Google Calendar sync, QR attendance, automated scheduling, photo evidence, and audit reports." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Ensure trailing slash on GitHub Pages so relative paths (./assets/...) resolve inside the repository folder
+      (function() {
+        if (
+          location.hostname.endsWith('github.io') &&
+          location.pathname.length > 1 &&
+          !location.pathname.endsWith('/') &&
+          !location.pathname.endsWith('.html')
+        ) {
+          location.replace(location.pathname + '/' + location.search + location.hash);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
