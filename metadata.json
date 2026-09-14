@@ -1,0 +1,6 @@
+{
+  "name": "Dyeing Factory Training System",
+  "description": "Comprehensive employee training management system for dyeing and textile facilities, featuring compliance tracking (ETP, ZDHC, Safety), Google Sheets & Google Calendar sync, QR attendance, automated scheduling, photo evidence, and audit reports.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
