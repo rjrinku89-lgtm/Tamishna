@@ -17,12 +17,22 @@ export const WORKSPACE_SCOPES = [
   'https://www.googleapis.com/auth/drive.file',
 ];
 
-// Initialize Firebase once
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
+// Initialize Firebase once safely
+let app: any = null;
+let authInstance: any = null;
+let providerInstance: any = null;
 
-const provider = new GoogleAuthProvider();
-WORKSPACE_SCOPES.forEach((scope) => provider.addScope(scope));
+try {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  authInstance = getAuth(app);
+  providerInstance = new GoogleAuthProvider();
+  WORKSPACE_SCOPES.forEach((scope) => providerInstance.addScope(scope));
+} catch (e) {
+  console.warn('Firebase initialization fallback:', e);
+}
+
+export const auth = authInstance;
+export const provider = providerInstance;
 
 // In-memory access token cache (NOT persisted in localStorage)
 let cachedAccessToken: string | null = null;
@@ -35,6 +45,10 @@ export const initAuth = (
   onAuthSuccess?: (user: User, token: string) => void,
   onAuthFailure?: () => void
 ) => {
+  if (!auth) {
+    if (onAuthFailure) onAuthFailure();
+    return () => {};
+  }
   return onAuthStateChanged(auth, async (user: User | null) => {
     if (user) {
       if (cachedAccessToken) {
@@ -53,6 +67,9 @@ export const initAuth = (
  * Perform Google Sign-In with OAuth pop-up requesting Sheets and Calendar scopes.
  */
 export const googleSignIn = async (): Promise<{ user: User; accessToken: string } | null> => {
+  if (!auth || !provider) {
+    throw new Error('Google authentication service is not initialized.');
+  }
   try {
     isSigningIn = true;
     const result = await signInWithPopup(auth, provider);
@@ -82,7 +99,9 @@ export const getAccessToken = async (): Promise<string | null> => {
  * Sign out of Google Workspace session.
  */
 export const googleLogout = async (): Promise<void> => {
-  await signOut(auth);
+  if (auth) {
+    await signOut(auth);
+  }
   cachedAccessToken = null;
 };
 
