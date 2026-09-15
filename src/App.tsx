@@ -8,7 +8,8 @@ import {
   Certificate, 
   User, 
   SessionStatus,
-  DepartmentItem 
+  DepartmentItem,
+  FactoryFacilityIdentity 
 } from './types';
 import { 
   INITIAL_USERS, 
@@ -18,7 +19,8 @@ import {
   INITIAL_ATTENDANCE, 
   INITIAL_PHOTOS, 
   INITIAL_CERTIFICATES,
-  INITIAL_DEPARTMENTS 
+  INITIAL_DEPARTMENTS,
+  INITIAL_FACTORY_IDENTITY 
 } from './data/initialData';
 import { Header } from './components/Header';
 import { Sidebar, NavTab } from './components/Sidebar';
@@ -39,13 +41,26 @@ import { ReportsView } from './components/ReportsView';
 import { SettingsView } from './components/SettingsView';
 import { GoogleWorkspaceView } from './components/GoogleWorkspaceView';
 import { LoginModal } from './components/LoginModal';
+import { LoginView } from './components/LoginView';
 import { exportAuditReportToExcel } from './utils/exportUtils';
 
 export default function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
 
-  // Authentication & Role
+  // Dynamic Users & Security Credentials State
+  const [users, setUsers] = useState<User[]>(() => {
+    const saved = localStorage.getItem('dyeing_system_users');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch {}
+    }
+    return INITIAL_USERS;
+  });
+
+  // Authentication & Active Role
   const [currentUser, setCurrentUser] = useState<User>(() => {
     const saved = localStorage.getItem('dyeing_system_user');
     if (saved) {
@@ -56,6 +71,15 @@ export default function App() {
     return INITIAL_USERS[0]; // Default: Admin
   });
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // Factory Facility Identity & Compliance State
+  const [factoryIdentity, setFactoryIdentity] = useState<FactoryFacilityIdentity>(() => {
+    const saved = localStorage.getItem('dyeing_system_facility_identity');
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return INITIAL_FACTORY_IDENTITY;
+  });
 
   // Core Data with localStorage persistence
   const [employees, setEmployees] = useState<Employee[]>(() => {
@@ -136,6 +160,14 @@ export default function App() {
   }, [currentUser]);
 
   useEffect(() => {
+    localStorage.setItem('dyeing_system_users', JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    localStorage.setItem('dyeing_system_facility_identity', JSON.stringify(factoryIdentity));
+  }, [factoryIdentity]);
+
+  useEffect(() => {
     localStorage.setItem('dyeing_system_departments', JSON.stringify(departments));
   }, [departments]);
 
@@ -167,6 +199,39 @@ export default function App() {
   const canEdit = currentUser.role !== 'Auditor';
 
   // --- Handlers ---
+  // User Management & Security Credentials handlers
+  const handleUpdateUser = (updatedUser: User) => {
+    setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
+    if (currentUser.id === updatedUser.id) {
+      setCurrentUser(updatedUser);
+    }
+  };
+
+  const handleAddUser = (newUser: User) => {
+    setUsers((prev) => [...prev, newUser]);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+    if (currentUser.id === userId) {
+      const fallback = users.find((u) => u.id !== userId && u.role === 'Admin') || users.find((u) => u.id !== userId) || INITIAL_USERS[0];
+      setCurrentUser(fallback);
+    }
+  };
+
+  const handleSwitchUser = (user: User) => {
+    setCurrentUser(user);
+  };
+
+  const handleResetUsersToDefault = () => {
+    setUsers(INITIAL_USERS);
+    setCurrentUser(INITIAL_USERS[0]);
+  };
+
+  const handleUpdateFactoryIdentity = (updated: FactoryFacilityIdentity) => {
+    setFactoryIdentity(updated);
+  };
+
   // Department handlers
   const handleAddDepartment = (newDept: DepartmentItem) => {
     setDepartments((prev) => [...prev, newDept]);
@@ -652,10 +717,37 @@ export default function App() {
           {activeTab === 'settings' && (
             <SettingsView
               currentUser={currentUser}
+              users={users}
               departments={departments}
+              factoryIdentity={factoryIdentity}
+              onUpdateFactoryIdentity={handleUpdateFactoryIdentity}
+              onUpdateUser={handleUpdateUser}
+              onAddUser={handleAddUser}
+              onDeleteUser={handleDeleteUser}
+              onSwitchUser={handleSwitchUser}
+              onResetUsersToDefault={handleResetUsersToDefault}
               onOpenLogin={() => setIsLoginOpen(true)}
               onResetData={handleResetData}
               onOpenDepartments={() => setActiveTab('departments')}
+              onNavigateToLogin={() => setActiveTab('login')}
+            />
+          )}
+
+          {activeTab === 'login' && (
+            <LoginView
+              users={users}
+              currentUser={currentUser}
+              factoryIdentity={factoryIdentity}
+              onLogin={(user) => {
+                setCurrentUser(user);
+                setActiveTab('dashboard');
+              }}
+              onLogout={() => {
+                const fallback = users[0] || INITIAL_USERS[0];
+                setCurrentUser(fallback);
+              }}
+              onNavigate={(tab) => setActiveTab(tab as NavTab)}
+              onOpenUserManagement={() => setActiveTab('settings')}
             />
           )}
         </main>
@@ -667,7 +759,12 @@ export default function App() {
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         currentUser={currentUser}
+        users={users}
         onLogin={(u) => setCurrentUser(u)}
+        onManageUsers={() => {
+          setIsLoginOpen(false);
+          setActiveTab('settings');
+        }}
       />
 
       {/* 2. QR Code Attendance Scanner Modal */}

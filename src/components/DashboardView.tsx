@@ -20,6 +20,7 @@ import {
   Calendar,
   ExternalLink 
 } from 'lucide-react';
+import { DashboardActualReport } from './DashboardActualReport';
 
 interface DashboardViewProps {
   employees: Employee[];
@@ -259,6 +260,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Actual Live Compliance & Training Audit Report Section */}
+      <DashboardActualReport
+        employees={employees}
+        schedules={schedules}
+        modules={modules}
+        attendanceRecords={attendanceRecords}
+        departments={propDepartments}
+        onNavigate={onNavigate}
+        onExportExcel={onExportAuditExcel}
+      />
 
       {/* Grid 2 Columns: Monthly Summary & Upcoming Training */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

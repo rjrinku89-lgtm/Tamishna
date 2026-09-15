@@ -4,6 +4,8 @@ import { Factory, ShieldCheck, UserCheck, LogIn, FileSpreadsheet } from 'lucide-
 
 interface HeaderProps {
   currentUser: User | null;
+  facilityName?: string;
+  facilityType?: string;
   onOpenLogin: () => void;
   onQuickExport: () => void;
   onOpenWorkspace?: () => void;
@@ -11,6 +13,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   currentUser,
+  facilityName = 'Apex Dyeing & Finishing Mills Ltd.',
+  facilityType,
   onOpenLogin,
   onQuickExport,
   onOpenWorkspace,
@@ -29,11 +33,11 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </h1>
           <div className="text-xs text-slate-300 flex items-center gap-2 mt-0.5">
-            <span>Apex Dyeing & Finishing Mills Ltd.</span>
+            <span className="font-medium text-white">{facilityName}</span>
             <span>&bull;</span>
             <span className="flex items-center gap-1 text-emerald-300">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>ETP / Production / Safety / ZDHC Compliance</span>
+              <span>{facilityType ? facilityType.split(',')[0] : 'ETP / Production / Safety / ZDHC Compliance'}</span>
             </span>
           </div>
         </div>

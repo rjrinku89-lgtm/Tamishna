@@ -11,7 +11,8 @@ import {
   FileText, 
   Settings,
   ShieldAlert,
-  FileSpreadsheet
+  FileSpreadsheet,
+  LogIn
 } from 'lucide-react';
 
 export type NavTab = 
@@ -25,7 +26,8 @@ export type NavTab =
   | 'certificates' 
   | 'reports' 
   | 'workspace'
-  | 'settings';
+  | 'settings'
+  | 'login';
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -113,6 +115,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'System Settings',
       icon: Settings,
       badge: null,
+    },
+    {
+      id: 'login' as NavTab,
+      label: 'Login Portal',
+      icon: LogIn,
+      badge: 'Auth',
     },
   ];
 

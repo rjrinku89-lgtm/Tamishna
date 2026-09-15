@@ -39,11 +39,17 @@ export type UserRole = 'Admin' | 'HR_Compliance' | 'Trainer' | 'Auditor';
 export interface User {
   id: string;
   username: string;
+  password?: string;
   name: string;
   role: UserRole;
   roleTitle: string;
   department: string;
+  email?: string;
+  phone?: string;
+  status?: 'Active' | 'Suspended' | 'Inactive';
   avatarUrl?: string;
+  permissions?: string[];
+  lastLogin?: string;
 }
 
 export interface Employee {
@@ -156,9 +162,44 @@ export interface Certificate {
   status: 'Valid' | 'Expired';
 }
 
-export interface EvidenceChecklist {
-  attendanceRecord: boolean;
-  trainingPhoto: boolean;
-  trainingMaterial: boolean;
-  evaluationQuiz: boolean;
+export interface ComplianceStandardItem {
+  id: string;
+  name: string;
+  standardCode: string;
+  authority: string;
+  certificateNumber: string;
+  status: 'Certified' | 'Compliant' | 'Active Renewal' | 'Under Audit';
+  validUntil: string;
+  category: 'Chemical & ZDHC' | 'Environmental & ETP' | 'Occupational Health & Safety' | 'Social & Labor' | 'Energy & Boiler';
+  scopeNotes?: string;
+}
+
+export interface FactoryFacilityIdentity {
+  facilityName: string;
+  facilityShortName: string;
+  facilityCode: string;
+  facilityType: string;
+  groupOrParentCompany: string;
+  address: string;
+  locationZone: string;
+  factoryHead: string;
+  ehsOfficer: string;
+  contactEmail: string;
+  contactPhone: string;
+  licenseNumber: string;
+  totalFloorArea: string;
+  dailyCapacity: string;
+  cetpCapacity: string;
+  // Key Regulatory Identifiers
+  zdhcGatewayAid: string;
+  zdhcLevel: string;
+  doeClearanceCert: string;
+  fireSafetyLicense: string;
+  bercLicenseNo: string;
+  isoCertifications: string;
+  higgFacilityId: string;
+  oekoTexCert: string;
+  complianceStandards: ComplianceStandardItem[];
+  lastAuditDate?: string;
+  nextAuditDate?: string;
 }
