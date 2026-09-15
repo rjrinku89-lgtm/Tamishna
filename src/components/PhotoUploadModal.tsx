@@ -23,6 +23,13 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
   const [category, setCategory] = useState<TrainingPhoto['category']>('Practical / PPE Drill');
   const [caption, setCaption] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [fileName, setFileName] = useState<string>('');
+  const [fileSize, setFileSize] = useState<string>('');
+  const [fileType, setFileType] = useState<'image' | 'document' | 'pdf'>('image');
+  const [evidenceDate, setEvidenceDate] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
+  const [auditTag, setAuditTag] = useState<string>('General Compliance');
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -30,11 +37,29 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image file must be less than 5MB.');
+      if (file.size > 10 * 1024 * 1024) {
+        setError('File must be less than 10MB.');
         return;
       }
       setError('');
+      setFileName(file.name);
+      
+      const sizeStr = file.size > 1024 * 1024 
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` 
+        : `${Math.round(file.size / 1024)} KB`;
+      setFileSize(sizeStr);
+
+      const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+      const isDoc = file.name.endsWith('.docx') || file.name.endsWith('.doc') || file.name.endsWith('.xlsx');
+
+      if (isPdf) {
+        setFileType('pdf');
+      } else if (isDoc) {
+        setFileType('document');
+      } else {
+        setFileType('image');
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -43,30 +68,49 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
     }
   };
 
-  const handleSamplePhotoSelect = (sampleUrl: string, sampleCategory: TrainingPhoto['category'], sampleCaption: string) => {
+  const handleSamplePhotoSelect = (
+    sampleUrl: string, 
+    sampleCategory: TrainingPhoto['category'], 
+    sampleCaption: string,
+    sampleTag: string = 'General Compliance',
+    sampleType: 'image' | 'document' | 'pdf' = 'image',
+    sampleName: string = 'Sample_Evidence.jpg'
+  ) => {
     setPreviewUrl(sampleUrl);
     setCategory(sampleCategory);
     setCaption(sampleCaption);
+    setAuditTag(sampleTag);
+    setFileType(sampleType);
+    setFileName(sampleName);
+    setFileSize('2.5 MB');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!previewUrl) {
-      setError('Please select or upload a training photo.');
+      setError('Please select or upload a photo or document evidence.');
       return;
     }
 
     const schedule = schedules.find((s) => s.id === selectedScheduleId);
+    const dateToUse = evidenceDate || schedule?.date || new Date().toISOString().split('T')[0];
+    const monthYear = dateToUse.substring(0, 7); // e.g. "2026-08"
+
     const newPhoto: TrainingPhoto = {
-      id: `photo-${Date.now()}`,
+      id: `evidence-${Date.now()}`,
       scheduleId: selectedScheduleId,
       scheduleTitle: schedule?.moduleName || 'Training Session',
-      date: schedule?.date || new Date().toISOString().split('T')[0],
+      date: dateToUse,
+      monthYear,
       category,
+      fileType,
+      fileName: fileName || `${category.replace(/\s+/g, '_')}_${dateToUse}.jpg`,
+      fileSize: fileSize || '1.8 MB',
       imageUrl: previewUrl,
       caption: caption.trim() || `${category} - ${schedule?.moduleName}`,
       uploadedBy: currentUser,
       uploadedAt: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      auditTag,
     };
 
     onUpload(newPhoto);
@@ -116,54 +160,106 @@ export const PhotoUploadModal: React.FC<PhotoUploadModalProps> = ({
             </select>
           </div>
 
-          {/* Category */}
+          {/* Category & Evidence Type */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Evidence Category:
+              </label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as TrainingPhoto['category'])}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#123b5d]"
+              >
+                <option value="Practical / PPE Drill">Practical / PPE Drill</option>
+                <option value="Trainer Delivery">Trainer Delivery</option>
+                <option value="Group Photo">Group Photo</option>
+                <option value="Attendance Sheet">Signed Attendance Sheet</option>
+                <option value="Evaluation Sheet">Evaluation / Quiz Sheet</option>
+                <option value="Audit Document / Report">Audit Document / Report</option>
+                <option value="Certificate Sample">Certificate Sample</option>
+                <option value="SOP / Material">SOP / Training Material</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Evidence Date (Month-Wise):
+              </label>
+              <input
+                type="date"
+                value={evidenceDate}
+                onChange={(e) => setEvidenceDate(e.target.value)}
+                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#123b5d]"
+              />
+            </div>
+          </div>
+
+          {/* Audit Tag */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Evidence Category:
+              Audit Compliance Tag:
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as TrainingPhoto['category'])}
-              className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#123b5d]"
-            >
-              <option value="Practical / PPE Drill">Practical / PPE Drill</option>
-              <option value="Trainer Delivery">Trainer Delivery</option>
-              <option value="Group Photo">Group Photo</option>
-              <option value="Attendance Sheet">Signed Attendance Sheet</option>
-              <option value="Evaluation Sheet">Evaluation / Quiz Sheet</option>
-            </select>
+            <div className="flex flex-wrap gap-1.5">
+              {['General Compliance', 'ZDHC MRSL', 'Fire Safety Audit', 'DoE Audit', 'Higg FEM', 'Buyer Audit 2026'].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setAuditTag(tag)}
+                  className={`px-2.5 py-1 text-xs rounded-md border transition ${
+                    auditTag === tag
+                      ? 'bg-[#123b5d] text-white border-[#123b5d] font-semibold'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* File Upload Zone */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Photo File:
+              Upload Photo or Document File (PDF, DOCX, JPG, PNG):
             </label>
             <div className="border-2 border-dashed border-slate-300 hover:border-[#123b5d] rounded-xl p-4 text-center cursor-pointer transition relative bg-slate-50">
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,.pdf,.docx,.doc,.xlsx,.xls"
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
               />
               {previewUrl ? (
                 <div className="space-y-2">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="max-h-40 mx-auto rounded-lg object-cover shadow-xs border border-slate-200"
-                  />
+                  {fileType === 'image' ? (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="max-h-40 mx-auto rounded-lg object-cover shadow-xs border border-slate-200"
+                    />
+                  ) : (
+                    <div className="p-4 bg-white rounded-lg border border-slate-200 max-w-sm mx-auto flex items-center space-x-3 text-left">
+                      <div className="w-10 h-10 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                        {fileType}
+                      </div>
+                      <div className="truncate">
+                        <div className="text-xs font-semibold text-slate-800 truncate">{fileName}</div>
+                        <div className="text-[11px] text-slate-500">{fileSize} &bull; Document Verified</div>
+                      </div>
+                    </div>
+                  )}
                   <span className="text-xs text-sky-700 font-semibold block">
-                    Click to change uploaded image
+                    Click to replace selected file ({fileName || 'Photo/Document'})
                   </span>
                 </div>
               ) : (
                 <div className="space-y-1.5 py-4">
                   <Image className="w-8 h-8 text-slate-400 mx-auto" />
                   <div className="text-xs font-semibold text-slate-700">
-                    Click or drag & drop to upload photo
+                    Click or drag & drop to upload photo or document
                   </div>
-                  <div className="text-[11px] text-slate-400">PNG, JPG, WebP up to 5MB</div>
+                  <div className="text-[11px] text-slate-400">PDF, Word DOCX, PNG, JPG up to 10MB</div>
                 </div>
               )}
             </div>

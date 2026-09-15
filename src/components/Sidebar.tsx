@@ -36,6 +36,7 @@ interface SidebarProps {
     modules: number;
     schedules: number;
     pendingTraining: number;
+    photos?: number;
   };
   userRole?: string;
 }
@@ -85,9 +86,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'photos' as NavTab,
-      label: 'Training Photos',
+      label: 'Photo & Audit Vault',
       icon: Camera,
-      badge: null,
+      badge: counts.photos ? counts.photos.toString() : null,
     },
     {
       id: 'certificates' as NavTab,

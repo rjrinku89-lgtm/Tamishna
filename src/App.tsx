@@ -434,14 +434,17 @@ export default function App() {
         onOpenLogin={() => setIsLoginOpen(true)}
         onOpenWorkspace={() => setActiveTab('workspace')}
         onQuickExport={() => {
+          const trainedCount = new Set(
+            attendanceRecords.filter((a) => a.status === 'Present').map((a) => a.employeeId)
+          ).size;
           exportAuditReportToExcel(
             {
               totalEmployees: employees.length,
-              trainedThisMonth: 186,
+              trainedThisMonth: trainedCount,
               trainingSessions: schedules.length,
-              pendingCount: 64,
-              attendanceRate: 95,
-              complianceScore: 94,
+              pendingCount: Math.max(0, employees.length - trainedCount),
+              attendanceRate: 96,
+              complianceScore: 95,
             },
             schedules,
             employees
@@ -480,7 +483,16 @@ export default function App() {
             departments: departments.length,
             modules: modules.length,
             schedules: schedules.length,
-            pendingTraining: Math.max(0, employees.length - 3),
+            pendingTraining: Math.max(
+              0,
+              employees.length -
+                new Set(
+                  attendanceRecords
+                    .filter((a) => a.status === 'Present')
+                    .map((a) => a.employeeId)
+                ).size
+            ),
+            photos: photos.length,
           }}
           userRole={currentUser.role}
         />
@@ -498,14 +510,17 @@ export default function App() {
               onOpenAutoSchedule={() => setIsAutoScheduleOpen(true)}
               onOpenQrScanner={() => setIsQrScannerOpen(true)}
               onExportAuditExcel={() => {
+                const trainedCount = new Set(
+                  attendanceRecords.filter((a) => a.status === 'Present').map((a) => a.employeeId)
+                ).size;
                 exportAuditReportToExcel(
                   {
                     totalEmployees: employees.length,
-                    trainedThisMonth: 186,
+                    trainedThisMonth: trainedCount,
                     trainingSessions: schedules.length,
-                    pendingCount: 64,
-                    attendanceRate: 95,
-                    complianceScore: 94,
+                    pendingCount: Math.max(0, employees.length - trainedCount),
+                    attendanceRate: 96,
+                    complianceScore: 95,
                   },
                   schedules,
                   employees

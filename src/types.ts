@@ -125,12 +125,17 @@ export interface TrainingPhoto {
   id: string;
   scheduleId: string;
   scheduleTitle: string;
-  date: string;
-  category: 'Trainer Delivery' | 'Group Photo' | 'Practical / PPE Drill' | 'Attendance Sheet' | 'Evaluation Sheet';
+  date: string; // YYYY-MM-DD
+  monthYear?: string; // YYYY-MM e.g. "2026-08"
+  category: 'Trainer Delivery' | 'Group Photo' | 'Practical / PPE Drill' | 'Attendance Sheet' | 'Evaluation Sheet' | 'Audit Document / Report' | 'Certificate Sample' | 'SOP / Material';
+  fileType?: 'image' | 'document' | 'pdf' | 'excel';
+  fileName?: string;
+  fileSize?: string;
   imageUrl: string;
   caption: string;
   uploadedBy: string;
   uploadedAt: string;
+  auditTag?: string; // e.g. "Buyer Audit 2026", "ZDHC Compliance", "Fire Safety Dept"
 }
 
 export interface Certificate {
