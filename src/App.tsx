@@ -249,6 +249,10 @@ export default function App() {
     setModules((prev) => [...prev, newMod]);
   };
 
+  const handleUpdateModule = (updatedMod: TrainingModule) => {
+    setModules((prev) => prev.map((m) => (m.id === updatedMod.id ? updatedMod : m)));
+  };
+
   const handleDeleteModule = (id: string) => {
     setModules((prev) => prev.filter((m) => m.id !== id));
   };
@@ -550,6 +554,7 @@ export default function App() {
             <ModulesView
               modules={modules}
               onAddModule={handleAddModule}
+              onUpdateModule={handleUpdateModule}
               onDeleteModule={handleDeleteModule}
               canEdit={canEdit}
             />

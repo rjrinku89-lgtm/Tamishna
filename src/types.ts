@@ -61,6 +61,19 @@ export interface Employee {
   photoUrl?: string;
 }
 
+export type MaterialFileType = 'pdf' | 'ppt' | 'word' | 'other';
+
+export interface ModuleMaterial {
+  id: string;
+  name: string;
+  fileType: MaterialFileType;
+  fileExtension: string;
+  fileSize: number; // in bytes
+  uploadedAt: string;
+  dataUrl?: string; // base64 / blob URL for viewing & downloading
+  description?: string;
+}
+
 export interface TrainingModule {
   id: string;
   code: string;
@@ -72,6 +85,7 @@ export interface TrainingModule {
   description: string;
   complianceStandard: string;
   requiredPassingScore: number;
+  materials?: ModuleMaterial[];
 }
 
 export interface TrainingSchedule {

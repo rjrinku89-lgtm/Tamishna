@@ -279,6 +279,26 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'Practical training on fire extinguisher usage, alarm triggers, factory evacuation maps, and sprinkler protocols.',
     complianceStandard: 'ISO 45001 / Bangladesh Fire Service Act 2003',
     requiredPassingScore: 80,
+    materials: [
+      {
+        id: 'mat-1-1',
+        name: 'Fire_Safety_Evacuation_Plan_2026.pdf',
+        fileType: 'pdf',
+        fileExtension: 'pdf',
+        fileSize: 2450000,
+        uploadedAt: '2026-08-15',
+        description: 'Comprehensive factory emergency assembly layout, fire hydrant locations & warden assignments.',
+      },
+      {
+        id: 'mat-1-2',
+        name: 'Fire_Drill_Training_Slides_v2.pptx',
+        fileType: 'ppt',
+        fileExtension: 'pptx',
+        fileSize: 4820000,
+        uploadedAt: '2026-08-18',
+        description: 'Classroom visual slides for trainer presentation (Classes A, B, C fire extinguisher operation).',
+      },
+    ],
   },
   {
     id: 'mod-2',
@@ -291,6 +311,26 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'Proper donning of respirator masks, acid-proof gloves, goggles, eyewash stations, and Safety Data Sheet (SDS) interpretation.',
     complianceStandard: 'ZDHC MRSL Level 3 & OSHA 1910.1200',
     requiredPassingScore: 85,
+    materials: [
+      {
+        id: 'mat-2-1',
+        name: 'Chemical_Spill_Emergency_SOP.docx',
+        fileType: 'word',
+        fileExtension: 'docx',
+        fileSize: 1120000,
+        uploadedAt: '2026-08-20',
+        description: 'Standard Operating Procedure for neutralizing acid/alkali spills and eyewash flush checklist.',
+      },
+      {
+        id: 'mat-2-2',
+        name: 'ZDHC_MRSL_v3.1_Compliance_Manual.pdf',
+        fileType: 'pdf',
+        fileExtension: 'pdf',
+        fileSize: 3150000,
+        uploadedAt: '2026-08-22',
+        description: 'Official ZDHC Restricted Substance conformance limits for textile dyeing auxiliaries.',
+      },
+    ],
   },
   {
     id: 'mod-3',
@@ -303,6 +343,26 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'Biological aeration tank parameters (DO, MLSS), chemical dosing (alum, polymer, coagulant), clarifier monitoring, and COD/BOD reduction.',
     complianceStandard: 'DoE Bangladesh ECR 2023 & Higg FEM 3.0',
     requiredPassingScore: 80,
+    materials: [
+      {
+        id: 'mat-3-1',
+        name: 'ETP_Biological_Reactor_SOP.docx',
+        fileType: 'word',
+        fileExtension: 'docx',
+        fileSize: 1450000,
+        uploadedAt: '2026-08-10',
+        description: 'Step-by-step aeration control, pH dosing, dissolved oxygen targets, and clarifier maintenance.',
+      },
+      {
+        id: 'mat-3-2',
+        name: 'ETP_Troubleshooting_Masterclass.pptx',
+        fileType: 'ppt',
+        fileExtension: 'pptx',
+        fileSize: 6200000,
+        uploadedAt: '2026-08-14',
+        description: 'Slide deck on resolving sludge bulking, high COD discharge, and polymer overdosing.',
+      },
+    ],
   },
   {
     id: 'mod-4',
@@ -315,6 +375,17 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'Elimination of hazardous chemicals (APEO, phthalates, heavy metals), Gateway InCheck verification, and supplier compliance tracking.',
     complianceStandard: 'ZDHC MRSL v3.1 / Buyer Restricted Substance List (RSL)',
     requiredPassingScore: 85,
+    materials: [
+      {
+        id: 'mat-4-1',
+        name: 'ZDHC_Gateway_InCheck_UserGuide.pdf',
+        fileType: 'pdf',
+        fileExtension: 'pdf',
+        fileSize: 1850000,
+        uploadedAt: '2026-08-25',
+        description: 'User manual for generating monthly chemical inventory InCheck verified reports.',
+      },
+    ],
   },
   {
     id: 'mod-5',
@@ -327,6 +398,17 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'Color-coded bins, hazardous chemical drum puncturing/storage, ETP dry sludge bagging, and licensed disposal manifests.',
     complianceStandard: 'ISO 14001 / Environmental Management System',
     requiredPassingScore: 75,
+    materials: [
+      {
+        id: 'mat-5-1',
+        name: 'Hazardous_Waste_Disposal_Protocol.docx',
+        fileType: 'word',
+        fileExtension: 'docx',
+        fileSize: 890000,
+        uploadedAt: '2026-08-28',
+        description: 'Guidelines for dry sludge storage in containment bays and authorized manifest sign-offs.',
+      },
+    ],
   },
   {
     id: 'mod-6',
@@ -339,6 +421,26 @@ export const INITIAL_MODULES: TrainingModule[] = [
     description: 'High pressure dyeing vessel isolation, steam valve lockouts, zero electrical energy verification before internal vessel cleaning.',
     complianceStandard: 'OSHA 1910.147 Control of Hazardous Energy',
     requiredPassingScore: 90,
+    materials: [
+      {
+        id: 'mat-6-1',
+        name: 'Dyeing_Machine_LOTO_Procedure.pdf',
+        fileType: 'pdf',
+        fileExtension: 'pdf',
+        fileSize: 2200000,
+        uploadedAt: '2026-08-30',
+        description: 'Diagrammatic step-by-step padlocking points for high-temperature fabric dyeing machines.',
+      },
+      {
+        id: 'mat-6-2',
+        name: 'LOTO_Electrical_Mechanical_Safety.pptx',
+        fileType: 'ppt',
+        fileExtension: 'pptx',
+        fileSize: 5100000,
+        uploadedAt: '2026-09-02',
+        description: 'Visual slides highlighting fatal hazard prevention during pressure vessel vessel servicing.',
+      },
+    ],
   },
 ];
 
